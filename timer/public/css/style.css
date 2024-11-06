@@ -1,0 +1,635 @@
+:root {
+    --background-color: #f0f0f0;
+    --container-bg-color: #fff;
+    --start-btn-color: #28a745;
+    --pause-btn-color: #ffc107;
+    --stop-btn-color: #dc3545;
+    --reset-btn-color: #6c757d;
+    --info-color: #007bff;
+    --warning-color: #fd7e14;
+    --progress-bg-color: #e0e0e0;
+    --progress-bar-color-start: #8bc34a;
+    --progress-bar-color-mid: #ffc107;
+    --progress-bar-color-end: #f44336;
+    --progress-bar-height: 50px;
+    --font-size-large: 4rem;
+    --font-size-extra-large: 20vh;
+    --font-size-medium: 1.5rem;
+    --font-size-small: 1.2rem;
+    --font-size-extra-small: 1rem;
+    --transition-speed: 0.5s;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 90%;
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: var(--container-bg-color);
+    padding: 10px;
+    height: 100vh;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensure footer stays at bottom */
+}
+
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    height: 80px;
+    max-width: 100%;
+}
+
+.event-time {
+    font-size: var(--font-size-large);
+    font-weight: bold;
+}
+
+.date-time {
+    font-size: var(--font-size-medium);
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.details-item {
+    flex: 1;
+    text-align: center;
+    font-size: var(--font-size-medium);
+    margin: 0 10px;
+}
+
+.details-item span {
+    font-weight: bold;
+}
+
+.timer {
+    font-size: var(--font-size-extra-large);
+    font-weight: bold;
+    color: blue;
+    margin-bottom: 20px;
+}
+
+.additional-time {
+    font-size: var(--font-size-large);
+    color: gray;
+    margin-bottom: 20px;
+}
+
+.progress {
+    width: 100%;
+    background-color: var(--progress-bg-color);
+    margin-bottom: 20px;
+    height: var(--progress-bar-height); /* Adjustable height for retractable bar */
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.2);
+    transition: height 0.5s ease; /* Smooth transition */
+}
+
+
+.progress-bar {
+    height: 100%;
+    background: var(--progress-bar-color-start);
+    line-height: var(--progress-bar-height);
+    color: black;
+    text-align: right;
+    padding-right: 10px;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-medium);
+    transition: width var(--transition-speed), background-color var(--transition-speed);
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: var(--font-size-small);
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+button.start {
+    background-color: var(--start-btn-color);
+}
+
+button.pause {
+    background-color: var(--pause-btn-color);
+}
+
+button.stop {
+    background-color: var(--stop-btn-color);
+}
+
+button.reset {
+    background-color: var(--reset-btn-color);
+}
+
+button.set,
+button.return-dashboard {
+    background-color: var(--info-color);
+}
+
+button.add-time {
+    background-color: var(--warning-color);
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+input[type="text"],
+input[type="number"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 0 10px;
+    width: 100px;
+    font-size: var(--font-size-medium);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+form {
+    text-align: left;
+    display: inline-block;
+    width: 100%;
+}
+
+.btn-run {
+    background-color: var(--start-btn-color);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: var(--font-size-small);
+}
+
+.btn-run:hover {
+    opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+    }
+
+    .timer {
+        font-size: 25vh;
+    }
+}
+
+
+/* Fancy styling for the title */
+.fancy-title {
+    font-size: var(--font-size-large);
+    font-weight: bold;
+    color: #4b0082; /* Indigo color for a fancier look */
+    text-shadow: 2px 2px #cccccc;
+}
+
+/* Additional Time Column styling */
+.additional-time-column {
+    text-align: left;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    max-width: 250px;
+}
+
+.additional-time-column h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: var(--font-size-medium);
+}
+
+.additional-time-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.station-number,
+.allocated-time {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    font-size: var(--font-size-small);
+}
+
+.added-times {
+    margin-top: 10px;
+}
+
+.added-time-entry {
+    font-size: var(--font-size-small);
+    color: #555;
+}
+
+/* Button styling adjustments */
+button.add-time {
+    margin-top: 10px;
+    font-size: var(--font-size-small);
+    color: white;
+    background-color: #ff9800;
+    border-radius: 5px;
+}
+
+/* Decorative background for the timer section */
+.background-decor {
+    background: linear-gradient(to bottom right, #e3f2fd, #f1f8e9);
+    padding: 20px;
+    border-radius: var(--border-radius);
+}
+
+/* Center the control buttons under the progress bar */
+.centered-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Fancy styling for the title */
+.fancy-title {
+    font-size: var(--font-size-large);
+    font-weight: bold;
+    color: red;;
+    text-shadow: 2px 2px #cccccc;
+}
+
+/* Additional Time Section */
+.additional-time-container {
+    width: 250px; /* Narrower width */
+    margin-top: 2rem;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.additional-time-container h3 {
+    color: #333;
+    font-size: var(--font-size-medium);
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.small-button {
+    font-size: var(--font-size-small);
+    padding: 5px 10px;
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Layout for the additional time inputs */
+.additional-time-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.station-number,
+.allocated-time {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: var(--font-size-small);
+    width: 100%;
+}
+
+/* Adjust added time entries to align with inputs */
+.added-times {
+    margin-top: 10px;
+    color: #555;
+}
+
+.added-time-entry {
+    font-size: 5vh; /* Increased font size for prominence */
+    color: #930909;
+    text-align: center;
+}
+
+.side-by-side {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px; /* Reduce gap to fit within a smaller container */
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px; /* Reduce space between label and input */
+}
+
+.station-number,
+.allocated-time {
+    width: 50px; /* Smaller width to fit in the container */
+    padding: 3px; /* Reduced padding for a more compact size */
+    text-align: center;
+    font-size: 0.9rem; /* Optional: slightly reduce font size if needed */
+}
+
+
+
+/* Additional Time Section - Updated styling */
+.additional-time-container {
+    width: 250px;
+    margin: 1rem auto;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Competitor section specific styling */
+.competitor-section {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    width: 250px;
+    margin: 0 auto;
+}
+
+.competitor-section h3 {
+    font-size: small;
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+/* Layout for the input container */
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Input group styling */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.input-group label {
+    font-size: 0.875rem;
+    color: #666;
+    white-space: nowrap;
+}
+
+/* Input styling */
+.station-number,
+.allocated-time {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    text-align: center;
+    max-width: 80px;
+}
+
+/* Time display styling */
+.added-time-entry {
+    font-size: 2.5rem;
+    color: #930909;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 300px) {
+    .competitor-section {
+        width: 95%;
+    }
+    
+    .input-container {
+        flex-direction: column;
+    }
+    
+    .input-group {
+        width: 100%;
+    }
+    
+    .station-number,
+    .allocated-time {
+        max-width: 100%;
+    }
+}
+
+/* Main content container to fit within the viewport without overflow */
+.main-content {
+    height: calc(100vh - 120px); /* Adjusted height to fit within viewport, accounting for header/footer */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+.timer-section {
+    width: 100%;
+    height: 100vh; /* Fixed height to keep layout stable */
+    position: relative; /* Enables positioning of the pseudo-element */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden; /* Prevent scroll if the background changes */
+}
+
+.timer-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Initially fills the entire height */
+    background: linear-gradient(to bottom right, #e3f2fd, #f1f8e9); /* Background color */
+    z-index: -1; /* Places the background behind other content */
+    transition: height 0.5s ease; /* Smooth transition effect */
+}
+
+
+.additional-time-container {
+    width: 250px;
+    height: 25vh; /* Set to 25% of viewport to fit remaining space */
+    margin: 1rem auto;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Only internal scrolling if content overflows */
+}
+
+.reset-button {
+    background-color: #dc3545; /* Red color for reset */
+    color: white;
+}
+/* Container to align additional timers horizontally */
+.additional-timers-container {
+  display: flex;
+  gap: 20px; /* Space between each timer box */
+  justify-content: center; /* Center timers horizontally */
+  flex-wrap: wrap; /* Allow timers to wrap to the next row if there's no space */
+}
+
+/* Style for each additional timer box */
+/* Container for all additional timers aligned horizontally */
+.additional-timers-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center; /* Center timers horizontally */
+  flex-wrap: wrap; /* Allow timers to wrap to the next row if needed */
+  margin-top: 20px;
+}
+
+/* Style for each additional timer box */
+.additional-time-container {
+  width: 250px;
+  background-color: #f7f7f7;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-bottom: 20px; /* Add space below each timer box */
+}
+
+.additional-time-container h3 {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+.additional-time-container .secondary-timer {
+  font-size: 2em;
+  color: red;
+  margin: 10px 0;
+}
+
+.additional-time-container button.set-allocated-time {
+  background-color: #FFA500; /* Orange color */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9em;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.additional-time-container button.reset-allocated-time {
+  background-color: #FF4500; /* Red color */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9em;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.additional-time-container button.close-time {
+  background-color: #ddd;
+  color: black;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9em;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+/* Side-by-side layout for input fields */
+.side-by-side {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.input-group {
+  flex: 1; /* Make both input fields equal width */
+}
+
+.additional-timer-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+/* Styling for buttons to match the design */
+button#set-allocated-time {
+  background-color: #FFA500; /* Orange */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button#reset-allocated-time {
+  background-color: #FF4500; /* Red */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}

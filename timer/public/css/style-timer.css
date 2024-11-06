@@ -1,0 +1,247 @@
+:root {
+    --background-color: #f0f0f0;
+    --container-bg-color: #fff;
+    --start-btn-color: #28a745;
+    --pause-btn-color: #ffc107;
+    --stop-btn-color: #dc3545;
+    --reset-btn-color: #6c757d;
+    --set-btn-color: #007bff;
+    --add-btn-color: #fd7e14;
+    --progress-bg-color: #e0e0e0;
+    --progress-bar-color: #8bc34a;
+    --font-size-large: 4rem;
+    --font-size-extra-large: 20vh;
+    --font-size-medium: 2rem;
+    --font-size-small: 1.2rem;
+    --font-size-extra-small: 1rem;
+    --title-font-size: 3rem;
+    --label-font-size: 1.8rem;
+    --transition-speed: 0.5s;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--container-bg-color);
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/*================================================================
+HEADER
+==================================================================*/
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    height: 100px;
+    padding: 10px 20px;
+    margin-bottom: 50px;
+}
+
+.logo {
+    height: 100%;
+}
+
+.event-title {
+    font-size: var(--title-font-size);
+    font-weight: bold;
+    color: red;
+    text-align: center;
+    text-shadow: 2px 2px #ccc;
+}
+
+.date-time {
+    font-size: var(--font-size-medium);
+    text-align: right;
+}
+/*================================================================
+MAIN CONTENT
+==================================================================*/
+.main-content {
+    background: linear-gradient(to bottom, #e3f2fd, #f1f8e9);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    flex: 1;
+}
+
+.timer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.details {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+    font-size: var(--label-font-size);
+    font-weight: bold;
+    color: #333;
+    text-shadow: 1px 1px #ddd;
+    text-align: center;
+    margin-bottom: 20px; /* Add space below details */
+}
+
+.timer {
+    font-size: var(--font-size-extra-large);
+    color: blue;
+    font-weight: bold;
+    text-shadow: 3px 3px #aaa;
+    margin-top: 20px;
+}
+
+.additional-time {
+  padding:2rem 0 2rem 0;
+    font-size: var(--font-size-large);
+    color: gray;
+    text-shadow: 1px 1px #ddd;
+}
+
+.progress {
+    width: 100%;
+    background-color: var(--progress-bg-color);
+    height: 50px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--progress-bar-color);
+    text-align: right;
+    padding-right: 10px;
+    color: black;
+    font-size: var(--font-size-medium);
+    line-height: 50px;
+    transition: width var(--transition-speed);
+}
+/*================================================================
+CONTROLS
+==================================================================*/
+.controls {
+  padding-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    width: 100%;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: var(--font-size-small);
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    color: white;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button.start {
+    background-color: var(--start-btn-color);
+}
+
+button.pause {
+    background-color: var(--pause-btn-color);
+}
+
+button.stop {
+    background-color: var(--stop-btn-color);
+}
+
+button.reset {
+    background-color: var(--reset-btn-color);
+}
+
+button.set {
+    background-color: var(--set-btn-color);
+}
+
+button.add-time {
+    background-color: var(--add-btn-color);
+    margin-left: 10px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--font-size-medium);
+    color: #333;
+    font-weight: bold;
+}
+
+.inline-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="text"],
+input[type="number"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 80px;
+    font-size: var(--font-size-medium);
+    text-align: center;
+}
+/*================================================================
+FOOTER CONTROL
+==================================================================*/
+footer {
+    display: flex;
+    justify-content: center;
+}
+
+button.return-dashboard {
+    background-color: var(--set-btn-color);
+    padding: 10px 20px;
+    font-size: var(--font-size-small);
+    color: white;
+    border: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+/*================================================================
+RESPONSIVE 
+==================================================================*/
+@media (max-width: 600px) {
+    .timer {
+        font-size: 15vh;
+    }
+
+    .details {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}

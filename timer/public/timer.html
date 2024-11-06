@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldSkills UK - Event Time</title>
+    <link rel="stylesheet" href="css/style-timer.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <img src="path/to/logo.png" alt="Event logo" class="logo" id="dynamic-logo">
+            <div class="event-title">WSUK National Competition Web Development</div>
+            <div class="date-time" id="date-time"></div>
+        </header>
+
+        <div class="main-content">
+            <main class="timer-section">
+                <div class="details">
+                    <div class="details-item">Presenter: <span id="presenter">Presenter Placeholder</span></div>
+                    <div class="details-item">Title: <span id="title">Module Placeholder</span></div>
+                    <div class="details-item">Time: <span id="schedule">Time Placeholder</span></div>
+                </div>
+                <div class="timer" id="timer">03:00:00</div>
+                <div class="additional-time" id="additional-time-display">+00:00:00</div>
+                <div class="progress">
+                    <div class="progress-bar" id="progress-bar">100%</div>
+                </div>
+
+                <div class="controls">
+                    <button id="start" class="start">Start</button>
+                    <button id="pause" class="pause">Pause</button>
+                    <button id="stop" class="stop">Stop</button>
+                    <button id="reset" class="reset">Reset</button>
+                    <label for="new-timeframe">New time frame (min):</label>
+                    <input type="text" id="new-timeframe" name="new-timeframe" pattern="\d+">
+                    <button id="set-timeframe" class="set">Set</button>
+                    <label for="additional-time">Additional Time:</label>
+                    <input type="text" id="additional-time" name="additional-time" pattern="\d+">
+                    <button id="add-time" class="add-time">Add</button>
+                    <button id="add-time-competitors" class="add-time-competitors">Competitor Extra Time</button>
+                </div>
+            </main>
+        </div>
+
+        <footer>
+            <button id="return-dashboard" class="return-dashboard">Return to Dashboard</button>
+        </footer>
+    </div>
+    <script src="js/timer.js"></script>
+    <script src="js/extra.js"></script>
+</body>
+
+</html>
