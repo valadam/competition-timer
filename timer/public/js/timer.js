@@ -1,6 +1,13 @@
-
 class TimerController {
-    constructor() {
+    constructor(initialSeconds = 0) {
+        this.initializeElements();
+        this.initializeState(initialSeconds);
+        this.bindEventListeners();
+        this.updateDisplays();
+    }
+
+    initializeElements() {
+        // Timer displays
         this.timerDisplay = document.getElementById('timer');
         this.additionalTimeDisplay = document.getElementById('additional-time-display');
         this.progressBar = document.getElementById('progress-bar');
@@ -18,22 +25,15 @@ class TimerController {
         // Input fields
         this.newTimeframeInput = document.getElementById('new-timeframe');
         this.additionalTimeInput = document.getElementById('additional-time');
+    }
 
-        // Timer state variables
-        this.totalTime = 0; // Initialize to 00:00:00
-        this.initialTimeframe = 180; // Default to 3 minutes, can be updated with SET button
-        this.maxTime = this.initialTimeframe; // Used as the reference for the progress bar
+    initializeState(initialSeconds) {
+        this.totalTime = initialSeconds;
+        this.initialTimeframe = 180;
+        this.maxTime = this.initialTimeframe;
         this.interval = null;
         this.isPaused = false;
         this.additionalTime = 0;
-
-        // Bind event listeners
-        this.bindEventListeners();
-
-        // Initialize display
-        this.updateTimerDisplay();
-        this.updateAdditionalTimeDisplay();
-        this.updateProgressBar();
     }
 
     bindEventListeners() {
@@ -41,38 +41,72 @@ class TimerController {
         this.pauseButton.addEventListener('click', () => this.pauseTimer());
         this.stopButton.addEventListener('click', () => this.stopTimer());
         this.resetButton.addEventListener('click', () => this.resetTimer());
-        this.setTimeframeButton.addEventListener('click', () => this.setTimeframe());
-        this.addTimeButton.addEventListener('click', () => this.addTime());
+        this.setTimeframeButton.addEventListener('click', () => this.validateAndSetTimeframe());
+        this.addTimeButton.addEventListener('click', () => this.validateAndAddTime());
         this.addCompetitorExtraTimeButton.addEventListener('click', () => this.addCompetitorExtraTime());
-        this.returnDashboardButton.addEventListener('click', () => {
-            window.location.href = "/dashboard"; // Placeholder, update with actual path
-        });
+        this.returnDashboardButton.addEventListener('click', () => window.location.href = "/");
     }
 
-    // Format time for display
     formatTime(seconds) {
-        const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
-        const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
-        const secs = String(seconds % 60).padStart(2, '0');
+        const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+        const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+        const secs = (seconds % 60).toString().padStart(2, '0');
         return `${hrs}:${mins}:${secs}`;
     }
 
-    // Start the timer
+    validateTimeInput(input, fieldName = 'time') {
+        const value = parseInt(input?.trim());
+        if (!input?.trim() || isNaN(value) || value <= 0) {
+            alert(`Please enter a valid ${fieldName} in minutes.`);
+            return null;
+        }
+        return value;
+    }
+
+    validateAndSetTimeframe() {
+        const newTime = this.validateTimeInput(this.newTimeframeInput.value, 'timeframe');
+        if (newTime !== null) {
+            this.totalTime = newTime * 60;
+            this.initialTimeframe = this.totalTime;
+            this.maxTime = this.totalTime;
+            this.updateDisplays();
+            this.clearInputs();
+        }
+    }
+
+    validateAndAddTime() {
+        const extraTime = this.validateTimeInput(this.additionalTimeInput.value, 'additional time');
+        if (extraTime !== null) {
+            const extraSeconds = extraTime * 60;
+            this.totalTime += extraSeconds;
+            this.additionalTime += extraSeconds;
+            this.maxTime += extraSeconds;
+            this.updateDisplays();
+            this.clearInputs();
+        }
+    }
+
     startTimer() {
-        if (this.interval || this.isPaused) return; // Prevent multiple intervals
+        // Clear any existing interval first
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+
+        // Start/resume the timer
         this.interval = setInterval(() => {
             if (this.totalTime > 0) {
                 this.totalTime--;
-                this.updateTimerDisplay();
-                this.updateProgressBar();
+                this.updateDisplays();
             } else {
                 this.stopTimer();
                 alert("Time's up!");
             }
         }, 1000);
+
+        // Reset pause state
+        this.isPaused = false;
     }
 
-    // Pause the timer
     pauseTimer() {
         if (this.interval) {
             clearInterval(this.interval);
@@ -81,92 +115,91 @@ class TimerController {
         }
     }
 
-    // Stop the timer and reset to 00:00:00
     stopTimer() {
         clearInterval(this.interval);
         this.interval = null;
-        this.totalTime = 0; // Reset to 00:00:00
+        this.totalTime = 0;
         this.isPaused = false;
-        this.updateTimerDisplay();
-        this.updateProgressBar();
+        this.updateDisplays();
     }
 
-    // Reset function sets timer to 00:00:00 and clears inputs
     resetTimer() {
         this.stopTimer();
         this.additionalTime = 0;
-        this.updateAdditionalTimeDisplay();
-        this.clearInputs(); // Clear new timeframe and additional time inputs
-        this.initialTimeframe = 180; // Reset default timeframe to 3 minutes
-        this.maxTime = this.initialTimeframe; // Reset max reference for progress
+        this.totalTime = this.initialTimeframe;
+        this.maxTime = this.initialTimeframe;
+        this.updateDisplays();
+        this.clearInputs();
     }
 
-    // Update timer display
+    addCompetitorExtraTime() {
+        const FIVE_MINUTES = 300;
+        this.totalTime += FIVE_MINUTES;
+        this.additionalTime += FIVE_MINUTES;
+        this.maxTime += FIVE_MINUTES;
+        this.updateDisplays();
+    }
+
+    updateDisplays() {
+        this.updateTimerDisplay();
+        this.updateAdditionalTimeDisplay();
+        this.updateProgressBar();
+    }
+
     updateTimerDisplay() {
         this.timerDisplay.textContent = this.formatTime(this.totalTime);
     }
 
-    // Update additional time display
     updateAdditionalTimeDisplay() {
         this.additionalTimeDisplay.textContent = `+${this.formatTime(this.additionalTime)}`;
     }
 
-    // Set a new timeframe and update progress bar to 100%
-    setTimeframe() {
-        const newTime = parseInt(this.newTimeframeInput.value);
-        if (!isNaN(newTime) && newTime > 0) {
-            this.totalTime = newTime * 60; // Convert minutes to seconds
-            this.initialTimeframe = this.totalTime; // Update initial timeframe reference
-            this.maxTime = this.totalTime; // Set maxTime reference for progress calculation
-            this.updateTimerDisplay();
-            this.updateProgressBar(); // Fill progress bar to 100% immediately
-            this.clearInputs(); // Clear input after setting new timeframe
-        } else {
-            alert("Please enter a valid timeframe in minutes.");
-        }
-    }
-
-    // Add additional time, clear input after addition
-    addTime() {
-        const extraTime = parseInt(this.additionalTimeInput.value);
-        if (!isNaN(extraTime) && extraTime > 0) {
-            this.totalTime += extraTime * 60; // Convert minutes to seconds
-            this.additionalTime += extraTime * 60;
-            this.maxTime += extraTime * 60; // Update maxTime reference dynamically
-            this.updateTimerDisplay();
-            this.updateAdditionalTimeDisplay();
-            this.additionalTimeInput.value = ""; // Clear input after adding
-            this.updateProgressBar(); // Update progress bar based on new maxTime
-        } else {
-            alert("Please enter a valid additional time in minutes.");
-        }
-    }
-
-    // Competitor extra time feature
-    addCompetitorExtraTime() {
-        this.totalTime += 300; // Add 5 minutes
-        this.additionalTime += 300;
-        this.maxTime += 300; // Update maxTime reference
-        this.updateTimerDisplay();
-        this.updateAdditionalTimeDisplay();
-        this.updateProgressBar(); // Update progress bar based on new maxTime
-    }
-
-    // Update progress bar width based on time left and dynamic maxTime
     updateProgressBar() {
         const progress = (this.totalTime / this.maxTime) * 100;
-        this.progressBar.style.width = `${Math.min(progress, 100)}%`; // Cap width at 100%
-        this.progressBar.textContent = progress >= 100 ? "100%" : `${Math.round(progress)}%`; // Ensure 100% label is visible
+        const cappedProgress = Math.min(progress, 100);
+        this.progressBar.style.width = `${cappedProgress}%`;
+        this.progressBar.textContent = `${Math.round(cappedProgress)}%`;
     }
 
-    // Clear all inputs
     clearInputs() {
         this.newTimeframeInput.value = "";
         this.additionalTimeInput.value = "";
     }
 }
 
-// Initialize the timer controller when the document is ready
-document.addEventListener('DOMContentLoaded', () => {
-    new TimerController();
+// Initialize configuration and timer
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('/data/config.json');
+        const config = await response.json();
+
+        // Set up UI elements
+        const logoElement = document.getElementById('dynamic-logo');
+        logoElement.src = config.logoPath || "/img/uploads/default_logo.png";
+
+        // Update event title using class selector
+        const eventTitleElement = document.querySelector('.event-title');
+        if (eventTitleElement) {
+            eventTitleElement.textContent = config.eventTitle || 'Event Title';
+        }
+
+        document.getElementById('presenter').textContent = config.presenter || 'Presenter';
+        document.getElementById('title').textContent = config.title || 'Module Title';
+
+        const initialSeconds = config.schedule || 0;
+        document.getElementById('schedule').textContent = formatDuration(initialSeconds);
+
+        // Initialize timer with configuration
+        new TimerController(initialSeconds);
+    } catch (error) {
+        console.error("Failed to load configuration:", error);
+        // Fallback to default initialization
+        new TimerController();
+    }
 });
+
+function formatDuration(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours > 0 ? hours + " Hours " : ""}${minutes} Minutes`.trim();
+}

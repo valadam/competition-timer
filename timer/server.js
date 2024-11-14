@@ -1,8 +1,12 @@
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const app = express();
+
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Configure multer to save uploaded files to the "public/img/uploads" directory
 const storage = multer.diskStorage({
@@ -15,47 +19,34 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Middleware to parse JSON
-app.use(express.json({ limit: '10mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+// Route to handle saving config data
+app.post('/save-config', express.json(), (req, res) => {
+  const configData = req.body;
+  const configDir = path.join(__dirname, 'public', 'data');
+  const configPath = path.join(configDir, 'config.json');
 
-// Endpoint to handle image upload and save configuration
-app.post('/upload-config', upload.single('logo-upload'), (req, res) => {
-  console.log("Request Body:", req.body);  // Log other form fields
-  console.log("File Information:", req.file);  // Log file information
-
-  if (req.file) {
-    console.log("File uploaded successfully:", req.file.path);
-    req.body.logo = `img/uploads/${req.file.originalname}`;
-  } else {
-    console.error("File upload failed.");
-    return res.status(400).send('File upload failed');
+  // Ensure the 'public/data' directory exists
+  if (!fs.existsSync(configDir)) {
+    fs.mkdirSync(configDir, { recursive: true }); // Create directory if it doesn't exist
   }
 
-  const configPath = path.join(__dirname, 'data', 'config.json');
-  fs.writeFile(configPath, JSON.stringify(req.body, null, 2), (err) => {
+  // Write the config data to config.json
+  fs.writeFile(configPath, JSON.stringify(configData, null, 2), (err) => {
     if (err) {
-      console.error("Error writing to config.json:", err);
-      return res.status(500).send('Error saving configuration');
+      console.error("Error saving config:", err);
+      return res.status(500).json({ message: "Failed to save config data" });
     }
-    res.send('Configuration saved');
+    res.json({ message: "Config data saved successfully!" });
   });
 });
 
-
-// Serve the configuration
-app.get('/config', (req, res) => {
-  const configPath = path.join(__dirname, 'data', 'config.json');
-  fs.readFile(configPath, 'utf-8', (err, data) => {
-    if (err) {
-      console.error("Error reading config.json:", err);
-      return res.status(500).send('Error reading configuration');
-    }
-    res.json(JSON.parse(data));
-  });
+// Endpoint to handle logo upload
+app.post('/upload-logo', upload.single('file'), (req, res) => {
+  res.json({ message: "Logo uploaded successfully!", filePath: `/img/uploads/${req.file.originalname}` });
 });
 
-const PORT = 3000;
+// Start the server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
