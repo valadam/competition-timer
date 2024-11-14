@@ -7,17 +7,20 @@
     --reset-btn-color: #6c757d;
     --set-btn-color: #007bff;
     --add-btn-color: #fd7e14;
+    --competitor-extra-time-color: #533687;
     --progress-bg-color: #e0e0e0;
     --progress-bar-color: #8bc34a;
     --font-size-large: 4rem;
-    --font-size-extra-large: 20vh;
+    --font-size-extra-large: 15vw; 
     --font-size-medium: 2rem;
     --font-size-small: 1.2rem;
     --font-size-extra-small: 1rem;
-    --title-font-size: 3rem;
+    --title-font-size: 4vw;
     --label-font-size: 1.8rem;
     --transition-speed: 0.5s;
 }
+
+/* General layout */
 
 body {
     font-family: Arial, sans-serif;
@@ -36,7 +39,6 @@ body {
     height: 100vh;
     background-color: var(--container-bg-color);
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -58,12 +60,15 @@ header {
     height: 100%;
 }
 
+/* Event Title Styling */
 .event-title {
-    font-size: var(--title-font-size);
+    font-size: 3rem;
     font-weight: bold;
-    color: red;
+    color: #d32f2f;
     text-align: center;
-    text-shadow: 2px 2px #ccc;
+    text-shadow: 3px 3px #999;
+    margin: 20px 0;
+    letter-spacing: 1px;
 }
 
 .date-time {
@@ -75,11 +80,11 @@ MAIN CONTENT
 ==================================================================*/
 .main-content {
     background: linear-gradient(to bottom, #e3f2fd, #f1f8e9);
-    padding: 20px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
+    gap: 20px;
     flex: 1;
 }
 
@@ -88,19 +93,19 @@ MAIN CONTENT
     flex-direction: column;
     align-items: center;
     width: 100%;
-    margin-top: 20px;
 }
 
+/* Responsive Font Sizes for Main Timer and Details */
 .details {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     width: 100%;
-    font-size: var(--label-font-size);
+    font-size: 1.2rem;
     font-weight: bold;
     color: #333;
     text-shadow: 1px 1px #ddd;
     text-align: center;
-    margin-bottom: 20px; /* Add space below details */
+    margin-bottom: 20px;
 }
 
 .timer {
@@ -111,11 +116,12 @@ MAIN CONTENT
     margin-top: 20px;
 }
 
+
 .additional-time {
-  padding:2rem 0 2rem 0;
     font-size: var(--font-size-large);
     color: gray;
     text-shadow: 1px 1px #ddd;
+    margin-bottom: 20px;
 }
 
 .progress {
@@ -123,7 +129,7 @@ MAIN CONTENT
     background-color: var(--progress-bg-color);
     height: 50px;
     overflow: hidden;
-    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.5);
 }
 
 .progress-bar {
@@ -150,14 +156,19 @@ CONTROLS
     width: 100%;
 }
 
+.inline-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 button {
     padding: 10px 20px;
     font-size: var(--font-size-small);
     border: none;
-    border-radius: 0;
     cursor: pointer;
     color: white;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 button.start {
@@ -185,6 +196,19 @@ button.add-time {
     margin-left: 10px;
 }
 
+/* Competitor Extra Time Button */
+button.competitor-extra-time {
+    background-color: var(--competitor-extra-time-color);
+    color: white;
+    padding: 10px 20px;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+}
+
+button.competitor-extra-time:hover {
+    opacity: 0.9;
+}
+
 button:hover {
     opacity: 0.9;
 }
@@ -206,13 +230,14 @@ button:hover {
 
 input[type="text"],
 input[type="number"] {
-    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    width: 80px;
+    width: 60px;
     font-size: var(--font-size-medium);
     text-align: center;
 }
+
+
 /*================================================================
 FOOTER CONTROL
 ==================================================================*/
@@ -226,11 +251,10 @@ button.return-dashboard {
     padding: 10px 20px;
     font-size: var(--font-size-small);
     color: white;
-    border: none;
     margin-top: 20px;
     margin-bottom: 20px;
     cursor: pointer;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 /*================================================================
 RESPONSIVE 
@@ -243,5 +267,114 @@ RESPONSIVE
     .details {
         grid-template-columns: 1fr;
         text-align: center;
+    }
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+    :root {
+        --font-size-extra-large: 10vw;
+        --title-font-size: 5vw;
+    }
+    
+    .logo {
+        height: 40px;
+    }
+
+    .event-title {
+        font-size: var(--title-font-size);
+    }
+
+    .details {
+        font-size: 1rem;
+        grid-template-columns: 1fr;
+    }
+
+    .controls {
+        gap: 5px;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+
+    button.return-dashboard {
+        font-size: 1rem;
+    }
+}
+
+/* Responsive Layout for Small Screens */
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column; /* Stack controls vertically on smaller screens */
+        gap: 5px;
+    }
+
+    .inline-controls {
+        flex-direction: column; /* Move inline-controls to a vertical stack */
+        align-items: center;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .controls {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .inline-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    button {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+
+    button.return-dashboard {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --font-size-extra-large: 12vw;
+        --title-font-size: 6vw;
+    }
+
+    .event-title {
+        font-size: var(--title-font-size);
+        text-align: center;
+    }
+
+    .details {
+        font-size: 0.9rem;
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .timer {
+        font-size: var(--font-size-extra-large);
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    button {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+
+    button.return-dashboard {
+        font-size: 0.9rem;
     }
 }

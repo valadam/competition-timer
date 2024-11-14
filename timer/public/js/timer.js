@@ -1,143 +1,172 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Fetch data from /config and set up the page with event details
-    fetch('/config')
-        .then(response => response.json())
-        .then(data => {
-            // Set the event details and logo
-            if (data.logo) {
-                document.getElementById('dynamic-logo').src = data.logo;
+
+class TimerController {
+    constructor() {
+        this.timerDisplay = document.getElementById('timer');
+        this.additionalTimeDisplay = document.getElementById('additional-time-display');
+        this.progressBar = document.getElementById('progress-bar');
+
+        // Control buttons
+        this.startButton = document.getElementById('start');
+        this.pauseButton = document.getElementById('pause');
+        this.stopButton = document.getElementById('stop');
+        this.resetButton = document.getElementById('reset');
+        this.setTimeframeButton = document.getElementById('set-timeframe');
+        this.addTimeButton = document.getElementById('add-time');
+        this.addCompetitorExtraTimeButton = document.getElementById('add-time-competitors');
+        this.returnDashboardButton = document.getElementById('return-dashboard');
+
+        // Input fields
+        this.newTimeframeInput = document.getElementById('new-timeframe');
+        this.additionalTimeInput = document.getElementById('additional-time');
+
+        // Timer state variables
+        this.totalTime = 0; // Initialize to 00:00:00
+        this.initialTimeframe = 180; // Default to 3 minutes, can be updated with SET button
+        this.maxTime = this.initialTimeframe; // Used as the reference for the progress bar
+        this.interval = null;
+        this.isPaused = false;
+        this.additionalTime = 0;
+
+        // Bind event listeners
+        this.bindEventListeners();
+
+        // Initialize display
+        this.updateTimerDisplay();
+        this.updateAdditionalTimeDisplay();
+        this.updateProgressBar();
+    }
+
+    bindEventListeners() {
+        this.startButton.addEventListener('click', () => this.startTimer());
+        this.pauseButton.addEventListener('click', () => this.pauseTimer());
+        this.stopButton.addEventListener('click', () => this.stopTimer());
+        this.resetButton.addEventListener('click', () => this.resetTimer());
+        this.setTimeframeButton.addEventListener('click', () => this.setTimeframe());
+        this.addTimeButton.addEventListener('click', () => this.addTime());
+        this.addCompetitorExtraTimeButton.addEventListener('click', () => this.addCompetitorExtraTime());
+        this.returnDashboardButton.addEventListener('click', () => {
+            window.location.href = "/dashboard"; // Placeholder, update with actual path
+        });
+    }
+
+    // Format time for display
+    formatTime(seconds) {
+        const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+        const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+        const secs = String(seconds % 60).padStart(2, '0');
+        return `${hrs}:${mins}:${secs}`;
+    }
+
+    // Start the timer
+    startTimer() {
+        if (this.interval || this.isPaused) return; // Prevent multiple intervals
+        this.interval = setInterval(() => {
+            if (this.totalTime > 0) {
+                this.totalTime--;
+                this.updateTimerDisplay();
+                this.updateProgressBar();
             } else {
-                console.error("Logo path missing in config data.");
-            }
-            document.getElementById('event-title').textContent = data.eventTitle;
-            document.getElementById('presenter').textContent = data.presenter;
-            document.getElementById('title').textContent = data.title;
-            document.getElementById('schedule').textContent = `${data.schedule / 60} min`;  // Display schedule in minutes
-
-            // Initialize the timer with the schedule from config.json
-            initializeTimer(data.schedule);
-        })
-        .catch(error => console.error("Error loading config data:", error));
-
-    // Update current date and time display every second
-    setInterval(updateDateTime, 1000);
-    updateDateTime(); // Initial call to set immediately
-
-    // Add event listener to "Return to Dashboard" button
-    document.getElementById('return-dashboard').addEventListener('click', () => {
-        window.location.href = 'index.html';  // Redirect to the dashboard page
-    });
-});
-
-function updateDateTime() {
-    const now = new Date();
-    document.getElementById('date-time').innerText = now.toLocaleString();
-}
-
-function initializeTimer(timeInSeconds) {
-    let duration = timeInSeconds;  // Original duration
-    let remainingTime = duration;  // Time left for the timer
-    let interval;                  // Interval ID for the timer
-    let isPaused = false;          // Pause state
-
-    const timerElement = document.getElementById('timer');
-    const progressBar = document.getElementById('progress-bar');
-    const additionalTimeDisplay = document.getElementById('additional-time-display');
-
-    // Initial display of the timer and progress bar
-    updateTimerDisplay(remainingTime);
-    updateProgressBar(remainingTime, duration);
-
-    // Button event listeners for timer control
-    document.getElementById('start').addEventListener('click', startTimer);
-    document.getElementById('pause').addEventListener('click', pauseTimer);
-    document.getElementById('stop').addEventListener('click', stopTimer);
-    document.getElementById('reset').addEventListener('click', resetTimer);
-    document.getElementById('set-timeframe').addEventListener('click', setNewTimeFrame);
-    document.getElementById('add-time').addEventListener('click', addAdditionalTime);
-
-    function startTimer() {
-        if (isPaused) {
-            isPaused = false;
-            return;
-        }
-        if (interval) clearInterval(interval); // Clear existing interval if running
-        interval = setInterval(() => {
-            if (remainingTime > 0) {
-                remainingTime--;
-                updateTimerDisplay(remainingTime);
-                updateProgressBar(remainingTime, duration);
-            } else {
-                clearInterval(interval);
+                this.stopTimer();
+                alert("Time's up!");
             }
         }, 1000);
     }
 
-    function pauseTimer() {
-        isPaused = true;
-        clearInterval(interval);
-    }
-
-    function stopTimer() {
-        clearInterval(interval);
-        isPaused = false;
-        remainingTime = 0;
-        updateTimerDisplay(remainingTime);
-        updateProgressBar(remainingTime, duration);
-    }
-
-    function resetTimer() {
-        clearInterval(interval);
-        remainingTime = duration;
-        isPaused = false;
-        updateTimerDisplay(remainingTime);
-        updateProgressBar(remainingTime, duration);
-        additionalTimeDisplay.innerText = "+00:00:00";
-    }
-
-    function setNewTimeFrame() {
-        const newTimeFrame = parseInt(document.getElementById('new-timeframe').value) * 60;
-        if (!isNaN(newTimeFrame) && newTimeFrame > 0) {
-            clearInterval(interval);
-            duration = newTimeFrame;
-            remainingTime = newTimeFrame;
-            updateTimerDisplay(remainingTime);
-            updateProgressBar(remainingTime, duration);
-            additionalTimeDisplay.innerText = "+00:00:00";
+    // Pause the timer
+    pauseTimer() {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+            this.isPaused = true;
         }
     }
 
-    function addAdditionalTime() {
-        const additionalTime = parseInt(document.getElementById('additional-time').value) * 60;
-        if (!isNaN(additionalTime) && additionalTime > 0) {
-            remainingTime += additionalTime;
-            duration += additionalTime;
-            updateTimerDisplay(remainingTime);
-            updateProgressBar(remainingTime, duration);
-            updateAdditionalTimeDisplay(additionalTime);
+    // Stop the timer and reset to 00:00:00
+    stopTimer() {
+        clearInterval(this.interval);
+        this.interval = null;
+        this.totalTime = 0; // Reset to 00:00:00
+        this.isPaused = false;
+        this.updateTimerDisplay();
+        this.updateProgressBar();
+    }
+
+    // Reset function sets timer to 00:00:00 and clears inputs
+    resetTimer() {
+        this.stopTimer();
+        this.additionalTime = 0;
+        this.updateAdditionalTimeDisplay();
+        this.clearInputs(); // Clear new timeframe and additional time inputs
+        this.initialTimeframe = 180; // Reset default timeframe to 3 minutes
+        this.maxTime = this.initialTimeframe; // Reset max reference for progress
+    }
+
+    // Update timer display
+    updateTimerDisplay() {
+        this.timerDisplay.textContent = this.formatTime(this.totalTime);
+    }
+
+    // Update additional time display
+    updateAdditionalTimeDisplay() {
+        this.additionalTimeDisplay.textContent = `+${this.formatTime(this.additionalTime)}`;
+    }
+
+    // Set a new timeframe and update progress bar to 100%
+    setTimeframe() {
+        const newTime = parseInt(this.newTimeframeInput.value);
+        if (!isNaN(newTime) && newTime > 0) {
+            this.totalTime = newTime * 60; // Convert minutes to seconds
+            this.initialTimeframe = this.totalTime; // Update initial timeframe reference
+            this.maxTime = this.totalTime; // Set maxTime reference for progress calculation
+            this.updateTimerDisplay();
+            this.updateProgressBar(); // Fill progress bar to 100% immediately
+            this.clearInputs(); // Clear input after setting new timeframe
+        } else {
+            alert("Please enter a valid timeframe in minutes.");
         }
     }
 
-    function updateAdditionalTimeDisplay(additionalSeconds) {
-        const hours = Math.floor(additionalSeconds / 3600);
-        const minutes = Math.floor((additionalSeconds % 3600) / 60);
-        const seconds = additionalSeconds % 60;
-        additionalTimeDisplay.innerText = `+${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    // Add additional time, clear input after addition
+    addTime() {
+        const extraTime = parseInt(this.additionalTimeInput.value);
+        if (!isNaN(extraTime) && extraTime > 0) {
+            this.totalTime += extraTime * 60; // Convert minutes to seconds
+            this.additionalTime += extraTime * 60;
+            this.maxTime += extraTime * 60; // Update maxTime reference dynamically
+            this.updateTimerDisplay();
+            this.updateAdditionalTimeDisplay();
+            this.additionalTimeInput.value = ""; // Clear input after adding
+            this.updateProgressBar(); // Update progress bar based on new maxTime
+        } else {
+            alert("Please enter a valid additional time in minutes.");
+        }
     }
 
-    function updateTimerDisplay(seconds) {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
-        timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    // Competitor extra time feature
+    addCompetitorExtraTime() {
+        this.totalTime += 300; // Add 5 minutes
+        this.additionalTime += 300;
+        this.maxTime += 300; // Update maxTime reference
+        this.updateTimerDisplay();
+        this.updateAdditionalTimeDisplay();
+        this.updateProgressBar(); // Update progress bar based on new maxTime
     }
 
-    function updateProgressBar(currentTime, maxTime) {
-        const percentage = (currentTime / maxTime) * 100;
-        progressBar.style.width = `${percentage}%`;
-        progressBar.textContent = `${Math.floor(percentage)}%`;
- 
+    // Update progress bar width based on time left and dynamic maxTime
+    updateProgressBar() {
+        const progress = (this.totalTime / this.maxTime) * 100;
+        this.progressBar.style.width = `${Math.min(progress, 100)}%`; // Cap width at 100%
+        this.progressBar.textContent = progress >= 100 ? "100%" : `${Math.round(progress)}%`; // Ensure 100% label is visible
     }
-    
+
+    // Clear all inputs
+    clearInputs() {
+        this.newTimeframeInput.value = "";
+        this.additionalTimeInput.value = "";
+    }
 }
 
+// Initialize the timer controller when the document is ready
+document.addEventListener('DOMContentLoaded', () => {
+    new TimerController();
+});
