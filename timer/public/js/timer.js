@@ -19,7 +19,6 @@ class TimerController {
         this.resetButton = document.getElementById('reset');
         this.setTimeframeButton = document.getElementById('set-timeframe');
         this.addTimeButton = document.getElementById('add-time');
-        this.addCompetitorExtraTimeButton = document.getElementById('add-time-competitors');
         this.returnDashboardButton = document.getElementById('return-dashboard');
 
         // Input fields
@@ -29,7 +28,7 @@ class TimerController {
 
     initializeState(initialSeconds) {
         this.totalTime = initialSeconds;
-        this.initialTimeframe = 180;
+        this.initialTimeframe = null; // Removed 3-minute default to allow dynamic setting
         this.maxTime = this.initialTimeframe;
         this.interval = null;
         this.isPaused = false;
@@ -43,7 +42,6 @@ class TimerController {
         this.resetButton.addEventListener('click', () => this.resetTimer());
         this.setTimeframeButton.addEventListener('click', () => this.validateAndSetTimeframe());
         this.addTimeButton.addEventListener('click', () => this.validateAndAddTime());
-        this.addCompetitorExtraTimeButton.addEventListener('click', () => this.addCompetitorExtraTime());
         this.returnDashboardButton.addEventListener('click', () => window.location.href = "/");
     }
 
@@ -132,14 +130,6 @@ class TimerController {
         this.clearInputs();
     }
 
-    addCompetitorExtraTime() {
-        const FIVE_MINUTES = 300;
-        this.totalTime += FIVE_MINUTES;
-        this.additionalTime += FIVE_MINUTES;
-        this.maxTime += FIVE_MINUTES;
-        this.updateDisplays();
-    }
-
     updateDisplays() {
         this.updateTimerDisplay();
         this.updateAdditionalTimeDisplay();
@@ -203,3 +193,113 @@ function formatDuration(seconds) {
     const minutes = Math.floor((seconds % 3600) / 60);
     return `${hours > 0 ? hours + " Hours " : ""}${minutes} Minutes`.trim();
 }
+
+// Function to update date and time
+function updateDateTime() {
+    const dateTimeElement = document.getElementById("date-time");
+    const now = new Date();
+
+    // Formatting date and time separately
+    const dateOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+    const timeOptions = {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    };
+
+    const formattedDate = now.toLocaleDateString('en-GB', dateOptions); // Date line
+    const formattedTime = now.toLocaleTimeString('en-GB', timeOptions); // Time line
+
+    // Updating with bold and shadow effect and splitting lines
+    dateTimeElement.innerHTML = `<span>${formattedDate}</span><br><span>${formattedTime}</span>`;
+}
+
+// Initial call without delay
+updateDateTime();
+// Refresh every second
+setInterval(updateDateTime, 1000);
+
+// Function to display a custom notification
+// Custom notification function
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.classList.add('show'); // Display notification
+
+    // Hide notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// Handle logo upload functionality
+const logoElement = document.getElementById('dynamic-logo');
+const logoUploadInput = document.getElementById('logo-upload');
+
+// Trigger file upload dialog on logo click (optional)
+logoElement.addEventListener('click', () => {
+    logoUploadInput.click();
+});
+
+// Handle the uploaded file and display it
+logoUploadInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+
+    if (file && file.type.startsWith('image/')) { // Check if the file is an image
+        const reader = new FileReader();
+
+        // When the file is loaded, set it as the logo source
+        reader.onload = function (e) {
+            logoElement.src = e.target.result;
+        };
+
+        reader.readAsDataURL(file); // Convert image file to a data URL for inline display
+    } else {
+        showNotification("Please upload a valid image file."); // Notify if not an image
+    }
+});
+
+
+// Function to update the "Time" display with the current countdown value
+function updateScheduleTime() {
+    const scheduleElement = document.getElementById('schedule');
+    const timerElement = document.getElementById('timer');
+    scheduleElement.innerText = timerElement.textContent;
+}
+
+
+
+// Function to update the "Time" display with the live countdown value
+function updateScheduleTime() {
+    const scheduleElement = document.getElementById('schedule');
+    const timerElement = document.getElementById('timer');
+    scheduleElement.innerText = timerElement.textContent;
+}
+
+// Integrate updateScheduleTime into the main timer loop
+setInterval(updateScheduleTime, 1000); // Update every second
+
+
+// Get initial countdown time from localStorage (if set by dashboard)
+const initialTime = localStorage.getItem('initialTime');
+const initialDisplayTime = localStorage.getItem('initialDisplayTime');
+
+if (initialTime && initialDisplayTime) {
+    this.initialTimeframe = parseInt(initialTime, 10); // Set countdown time in seconds
+    document.getElementById('schedule').innerText = initialDisplayTime; // Display time in "Time" section
+}
+
+// Update countdown when "Set" button is clicked
+document.getElementById('set-timeframe').addEventListener('click', function () {
+    const newTimeFrameInput = document.getElementById('new-timeframe').value;
+    if (newTimeFrameInput) {
+        const newTimeInSeconds = parseInt(newTimeFrameInput, 10) * 60;
+        this.initialTimeframe = newTimeInSeconds; // Set new countdown time
+        document.getElementById('schedule').innerText = newTimeFrameInput + ' Minutes'; // Update display
+    }
+});

@@ -52,3 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+
+// Pass the schedule value to timer.html on form submission
+document.getElementById('event-form').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent form submission to server
+    const scheduleInput = document.getElementById('schedule').value; // Get schedule in minutes
+    localStorage.setItem('initialTime', scheduleInput * 60); // Store initial time in seconds
+    localStorage.setItem('initialDisplayTime', scheduleInput + ' Minutes'); // Store display time as minutes
+    window.location.href = 'timer.html'; // Redirect to timer page
+});
