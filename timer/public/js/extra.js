@@ -1,65 +1,166 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Get all required elements
   const timerSection = document.querySelector(".timer-section");
-  const additionalTimeContainer = document.querySelector(".additional-time-container");
   const addButton = document.getElementById("add-time-competitors");
-
-  // Initially hide the additional time container and set timer section to full height
-  additionalTimeContainer.style.display = "none";
-  timerSection.style.height = "calc(100vh - 40px)"; // Adjusted to fit viewport with padding
-
-  // Add button click event to toggle visibility and adjust height only
-  addButton.addEventListener("click", function () {
-    if (additionalTimeContainer.style.display === "none") {
-      additionalTimeContainer.style.display = "block";
-      timerSection.style.height = "60vh"; // Shrink in height to fit within viewport
-    } else {
-      additionalTimeContainer.style.display = "none";// Return to full height
-    }
-  });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
+  const additionalTimersContainer = document.querySelector(".additional-timers-container");
   const mainTimerElement = document.getElementById("timer");
-  const startMainTimerButton = document.getElementById("start");
-  const pauseMainTimerButton = document.getElementById("pause");
-  const stopMainTimerButton = document.getElementById("stop");
-  const addButton = document.getElementById("add-time-competitors");
-  const timerSection = document.querySelector(".timer-section");
+  const mainStartButton = document.getElementById("start");
+  const mainPauseButton = document.getElementById("pause");
+  const mainStopButton = document.getElementById("stop");
 
-  // Container for all additional timers aligned horizontally
-  const additionalTimersContainer = document.createElement("div");
-  additionalTimersContainer.className = "additional-timers-container";
-  timerSection.appendChild(additionalTimersContainer);
+  // Array to hold all additional timers
+  const additionalTimers = [];
 
-  let mainTimerRunning = false;
-  let mainTimerPaused = false;
-
-  // Main timer control
-  startMainTimerButton.addEventListener("click", function () {
-    mainTimerRunning = true;
-    mainTimerPaused = false;
-    additionalTimers.forEach(timer => resumeSecondaryTimer(timer)); // Resume all active additional timers
-  });
-
-  pauseMainTimerButton.addEventListener("click", function () {
-    if (mainTimerRunning) {
-      mainTimerPaused = true;
-      additionalTimers.forEach(timer => pauseSecondaryTimer(timer)); // Pause all active additional timers
+  // Function to adjust main timer height - moved outside
+  function adjustMainTimerHeight() {
+    if (additionalTimers.length > 0) {
+      timerSection.classList.add('has-additional-timers');
+      additionalTimersContainer.style.display = 'flex';
+      const progressBar = document.querySelector('.progress');
+      if (progressBar) {
+        progressBar.style.display = 'block';
+        progressBar.style.visibility = 'visible';
+        progressBar.style.opacity = '1';
+      }
+    } else {
+      timerSection.classList.remove('has-additional-timers');
+      additionalTimersContainer.style.display = 'none';
     }
-  });
+  }
 
-  stopMainTimerButton.addEventListener("click", function () {
-    mainTimerRunning = false;
-    mainTimerPaused = false;
-    additionalTimers.forEach(timer => {
+  function isMainTimerRunning() {
+    const mainTimer = document.getElementById('timer');
+    const startButton = document.getElementById('start');
+    const pauseButton = document.getElementById('pause');
+
+    if (!mainTimer || !startButton || !pauseButton) return false;
+
+    // Check if timer has a non-zero value
+    const timerValue = mainTimer.textContent;
+    const isNonZeroTime = timerValue !== '00:00:00';
+
+    // Check button states using the inactive class
+    const isStartInactive = startButton.classList.contains('inactive');
+    const isPauseActive = !pauseButton.classList.contains('inactive');
+
+    console.log('Timer State:', {
+      timerValue,
+      isNonZeroTime,
+      isStartInactive,
+      isPauseActive
+    });
+
+    // Timer is running if time is non-zero and start is inactive (pause is active)
+    return isNonZeroTime && isStartInactive && isPauseActive;
+  }
+
+  function setupTimerControls(container, timer) {
+    const stationInput = container.querySelector(".station-number");
+    const timeInput = container.querySelector(".allocated-time");
+    const timerDisplay = container.querySelector(".secondary-timer");
+    const setButton = container.querySelector(".set-allocated-time");
+    const resetButton = container.querySelector(".reset-allocated-time");
+    const closeButton = container.querySelector(".close-time");
+
+    setButton.addEventListener("click", () => {
+      // First check station and time inputs
+      const station = stationInput.value.trim();
+      const additionalMinutes = parseInt(timeInput.value);
+
+      if (!station || !/^\d{1,2}$/.test(station)) {
+        alert("Please enter a valid station number (1-99)");
+        return;
+      }
+
+      if (isNaN(additionalMinutes) || additionalMinutes <= 0) {
+        alert("Please enter valid minutes");
+        return;
+      }
+
+      // Then check if main timer is actively running
+      if (!isMainTimerRunning()) {
+        alert("Main timer must be running (not stopped or paused) to set additional time");
+        return;
+      }
+
+      // Get main timer current time and additional time
+      const mainTimerSeconds = getMainTimerSeconds();
+      const additionalSeconds = additionalMinutes * 60;
+      const totalSeconds = mainTimerSeconds + additionalSeconds; // Combine main timer and additional time
+
+      timer.stationNumber = station;
+      timer.allocatedMinutes = Math.ceil(totalSeconds / 60);
+      timer.remainingSeconds = totalSeconds; // Set the total time
+      timer.active = true;
+      timer.isPaused = false;
+
+      startTimer(timer, timerDisplay);
+
+      // Disable inputs
+      stationInput.disabled = true;
+      timeInput.disabled = true;
+      setButton.disabled = true;
+    });
+
+    resetButton.addEventListener("click", () => {
       clearInterval(timer.interval);
       timer.active = false;
+      timer.remainingSeconds = 0;
+      timer.stationNumber = null;
+      timer.allocatedMinutes = 0;
+      timer.isPaused = false;
+
+      timerDisplay.textContent = "00:00:00";
+      stationInput.value = "";
+      timeInput.value = "";
+      stationInput.disabled = false;
+      timeInput.disabled = false;
+      setButton.disabled = false;
     });
-  });
 
-  const additionalTimers = []; // Array to hold each additional timer’s data
+    closeButton.addEventListener("click", () => {
+      if (timer.active) {
+        alert("Please reset the timer before closing");
+        return;
+      }
+      additionalTimersContainer.removeChild(container);
+      const index = additionalTimers.indexOf(timer);
+      if (index > -1) {
+        additionalTimers.splice(index, 1);
+      }
+      adjustMainTimerHeight();
+    });
+  }
 
-  // Helper function to format time in HH:MM:SS
+  function startTimer(timer, display) {
+    clearInterval(timer.interval);
+    timer.isPaused = false;
+
+    timer.interval = setInterval(() => {
+      if (!isMainTimerRunning()) {
+        if (!timer.isPaused) {
+          timer.isPaused = true;
+        }
+        return;
+      }
+
+      if (timer.remainingSeconds > 0 && !timer.isPaused) {
+        timer.remainingSeconds--;
+        display.textContent = formatTime(timer.remainingSeconds);
+      } else if (timer.remainingSeconds === 0) {
+        clearInterval(timer.interval);
+        timer.active = false;
+        alert(`Time's up for Station ${timer.stationNumber}!`);
+      }
+    }, 1000);
+  }
+
+  function getMainTimerSeconds() {
+    if (!mainTimerElement) return 0;
+    const mainTime = mainTimerElement.textContent.split(':');
+    return parseInt(mainTime[0]) * 3600 + parseInt(mainTime[1]) * 60 + parseInt(mainTime[2]);
+  }
+
   function formatTime(seconds) {
     const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
     const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
@@ -67,7 +168,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return `${hrs}:${mins}:${secs}`;
   }
 
-  // Function to create a new timer container with independent controls
   function createTimerContainer() {
     const newTimer = {
       stationNumber: null,
@@ -75,107 +175,41 @@ document.addEventListener("DOMContentLoaded", function () {
       remainingSeconds: 0,
       active: false,
       interval: null,
+      isPaused: false
     };
     additionalTimers.push(newTimer);
 
-    // Create the container element for the new timer
     const newTimerContainer = document.createElement("div");
-    newTimerContainer.className = "additional-time-container"; // Style class for the timer box
+    newTimerContainer.className = "additional-time-container";
     newTimerContainer.innerHTML = `
-      <h3>Competitor Additional Time</h3>
-      <div>
-        <label>Station Number:</label><br>
-        <input type="text" class="station-number" placeholder="0" maxlength="2">
-      </div>
-      <div>
-        <label>Allocated Time (min):</label>
-        <input type="number" class="allocated-time" placeholder="00" min="1">
+      <div class="timer-header">Competitor Additional Time</div>
+      <div class="input-row">
+        <div class="input-labels">
+          <span>Station Number</span>
+          <span>Time (min)</span>
+        </div>
+        <div class="input-fields">
+          <input type="text" class="station-number" placeholder="00" maxlength="2">
+          <input type="number" class="allocated-time" placeholder="00" min="1">
+        </div>
       </div>
       <div class="secondary-timer">00:00:00</div>
-      <button class="set-allocated-time">Set</button>
-      <button class="reset-allocated-time">Reset</button>
-      <button class="close-time">Close</button>
+      <div class="button-group">
+        <button class="set-allocated-time">Set</button>
+        <button class="reset-allocated-time">Reset</button>
+        <button class="close-time">Close</button>
+      </div>
     `;
 
-    additionalTimersContainer.appendChild(newTimerContainer); // Append to the container
-
-    const stationNumberInput = newTimerContainer.querySelector(".station-number");
-    const allocatedTimeInput = newTimerContainer.querySelector(".allocated-time");
-    const secondaryTimerDisplay = newTimerContainer.querySelector(".secondary-timer");
-    const setButton = newTimerContainer.querySelector(".set-allocated-time");
-    const resetButton = newTimerContainer.querySelector(".reset-allocated-time");
-    const closeButton = newTimerContainer.querySelector(".close-time");
-
-    // Set button: Starts the timer if the main timer is running
-    setButton.addEventListener("click", function () {
-      if (!mainTimerRunning || mainTimerPaused) {
-        alert("The main timer must be running to start the allocated time.");
-        return;
-      }
-
-      const allocatedMinutes = parseInt(allocatedTimeInput.value);
-      if (isNaN(allocatedMinutes) || allocatedMinutes <= 0) {
-        alert("Please enter a valid allocated time in minutes.");
-        return;
-      }
-
-      const stationNumber = stationNumberInput.value.padStart(2, '0');
-      if (!stationNumber || stationNumber.length > 2 || isNaN(stationNumber)) {
-        alert("Please enter a valid station number.");
-        return;
-      }
-
-      newTimer.stationNumber = stationNumber;
-      newTimer.allocatedMinutes = allocatedMinutes;
-
-      // Calculate total remaining time based on main timer
-      const mainTimer = mainTimerElement.textContent.split(":");
-      const mainTimerSeconds = parseInt(mainTimer[0]) * 3600 + parseInt(mainTimer[1]) * 60 + parseInt(mainTimer[2]);
-      newTimer.remainingSeconds = mainTimerSeconds + allocatedMinutes * 60;
-      secondaryTimerDisplay.textContent = formatTime(newTimer.remainingSeconds);
-
-      if (!newTimer.active) {
-        newTimer.active = true;
-        newTimer.interval = setInterval(() => countdownSecondaryTimer(newTimer, secondaryTimerDisplay), 1000);
-      }
-    });
-
-    // Reset button: Stops and resets the timer
-    resetButton.addEventListener("click", function () {
-      clearInterval(newTimer.interval);
-      newTimer.remainingSeconds = newTimer.allocatedMinutes * 60;
-      secondaryTimerDisplay.textContent = formatTime(newTimer.remainingSeconds);
-      newTimer.active = false;
-    });
-
-    // Close button: Removes the timer container if the timer is not active
-    closeButton.addEventListener("click", function () {
-      if (newTimer.active) {
-        alert("Cannot close the timer while it is active. Please reset the timer first.");
-      } else {
-        additionalTimersContainer.removeChild(newTimerContainer);
-        additionalTimers.splice(additionalTimers.indexOf(newTimer), 1); // Remove from array
-      }
-    });
+    additionalTimersContainer.appendChild(newTimerContainer);
+    setupTimerControls(newTimerContainer, newTimer);
   }
 
-  // Countdown function for each additional timer
-  function countdownSecondaryTimer(timer, displayElement) {
-    if (timer.remainingSeconds > 0) {
-      timer.remainingSeconds--;
-      displayElement.textContent = formatTime(timer.remainingSeconds);
-    } else {
-      clearInterval(timer.interval);
-      timer.active = false;
-      alert(`Station ${timer.stationNumber} timer finished.`);
-    }
+  // Add button click handler
+  if (addButton) {
+    addButton.addEventListener("click", function () {
+      createTimerContainer();
+      adjustMainTimerHeight();
+    });
   }
-
-  // Add button: Creates a new timer container for each additional station
-  addButton.addEventListener("click", function () {
-    createTimerContainer();
-  });
 });
-
-
-

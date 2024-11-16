@@ -1,45 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorldSkills UK - Event Time</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Event Timer Setup</title>
+    <link rel="stylesheet" href="css/dasboard.css">
 </head>
-
 <body>
     <div class="container">
-        <header>
-            <div class="event-time">EventTime</div>
-        </header>
-        <main>
-            <form id="event-form" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="event-title">Event Title:</label>
-                    <input type="text" id="event-title" name="event-title" required>
-                </div>
-                <div class="form-group">
-                    <label for="presenter">Presenter:</label>
-                    <input type="text" id="presenter" name="presenter" required>
-                </div>
-                <div class="form-group">
-                    <label for="title">Title:</label>
-                    <input type="text" id="title" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label for="schedule">Schedule (in minutes):</label>
-                    <input type="text" id="schedule" name="schedule" required pattern="\d+">
-                </div>
-                <div class="form-group">
-                    <label for="logo-upload">Upload Logo:</label>
-                    <input type="file" id="logo-upload" name="logo-upload" accept="image/*">
-                </div>
-                <button type="submit" class="btn-run">Run Timer</button>
-            </form>
-        </main>
+        <div class="event-time">Event Timer Setup</div>
+        
+        <form id="event-form">
+            <div class="form-group">
+                <label for="eventTitle">Event Title:</label>
+                <input type="text" id="eventTitle" required>
+            </div>
+
+            <div class="form-group">
+                <label for="presenter">Presenter:</label>
+                <input type="text" id="presenter" required>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="schedule">Schedule (in minutes):</label>
+                <input type="number" 
+                       id="schedule" 
+                       min="1" 
+                       step="1" 
+                       pattern="\d*" 
+                       inputmode="numeric" 
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="logo">Upload Logo:</label>
+                <input type="file" id="logo" accept="image/*">
+            </div>
+
+            <button type="submit" class="btn-run">Run Timer</button>
+        </form>
     </div>
     <script src="js/dashboard.js"></script>
 </body>
-
 </html>

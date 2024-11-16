@@ -84,13 +84,31 @@ class TimerController {
         }
     }
 
+    updateButtonStates() {
+        if (this.interval) {
+            // Timer is running
+            this.startButton.classList.add('inactive');
+            this.pauseButton.classList.remove('inactive');
+            this.stopButton.classList.remove('inactive');
+        } else if (this.isPaused) {
+            // Timer is paused
+            this.startButton.classList.remove('inactive');
+            this.pauseButton.classList.add('inactive');
+            this.stopButton.classList.remove('inactive');
+        } else if (this.totalTime === 0) {
+            // Timer is stopped or not started
+            this.startButton.classList.remove('inactive');
+            this.pauseButton.classList.add('inactive');
+            this.stopButton.classList.add('inactive');
+        }
+    }
+
+    // Modify these methods to update button states
     startTimer() {
-        // Clear any existing interval first
         if (this.interval) {
             clearInterval(this.interval);
         }
 
-        // Start/resume the timer
         this.interval = setInterval(() => {
             if (this.totalTime > 0) {
                 this.totalTime--;
@@ -101,8 +119,8 @@ class TimerController {
             }
         }, 1000);
 
-        // Reset pause state
         this.isPaused = false;
+        this.updateButtonStates();
     }
 
     pauseTimer() {
@@ -110,6 +128,7 @@ class TimerController {
             clearInterval(this.interval);
             this.interval = null;
             this.isPaused = true;
+            this.updateButtonStates();
         }
     }
 
@@ -119,6 +138,7 @@ class TimerController {
         this.totalTime = 0;
         this.isPaused = false;
         this.updateDisplays();
+        this.updateButtonStates();
     }
 
     resetTimer() {
@@ -128,6 +148,7 @@ class TimerController {
         this.maxTime = this.initialTimeframe;
         this.updateDisplays();
         this.clearInputs();
+        this.updateButtonStates();
     }
 
     updateDisplays() {
@@ -156,6 +177,8 @@ class TimerController {
         this.additionalTimeInput.value = "";
     }
 }
+
+
 
 // Initialize configuration and timer
 document.addEventListener('DOMContentLoaded', async () => {

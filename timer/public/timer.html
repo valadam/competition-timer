@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldSkills - Event Time</title>
-    <link rel="stylesheet" href="css/style-timer.css">
+    <link rel="stylesheet" href="css/timer.css">
+    <link rel="stylesheet" href="css/additional-time.css">
 </head>
 
 <body>
@@ -40,19 +41,21 @@
                     <label for="additional-time">Additional Time:</label>
                     <input type="text" id="additional-time" name="additional-time" pattern="\d+">
                     <button id="add-time" class="add-time">Add</button>
-                    <button id="add-time-competitors" class="competitor-extra-time">Competitor Extra Time</button>
+                   <button id="add-time-competitors" class="competitor-extra-time">Competitor Extra Time</button>
                 </div>
             </main>
         </div>
-<div class="notification" id="notification"></div>
-
+        <div class="notification" id="notification"></div>
+        <!-- Container for additional timers -->
+        <div class="additional-timers-container" style="display: none;"></div>
         <footer>
             <button id="return-dashboard" class="return-dashboard">Return to Dashboard</button>
         </footer>
     </div>
     <script src="js/timer.js"></script>
     <script src="js/dashboard.js"></script>
-    
+    <script src="js/extra.js"></script>
+
 </body>
 
 </html>

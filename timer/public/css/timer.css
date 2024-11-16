@@ -99,19 +99,6 @@ MAIN CONTENT
     width: 100%;
 }
 
-/* Responsive Font Sizes for Main Timer and Details */
-.details {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    width: 100%;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    text-shadow: 1px 1px #ddd;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
 .timer {
     font-size: var(--font-size-extra-large);
     color: blue;
@@ -145,6 +132,19 @@ MAIN CONTENT
     font-size: var(--font-size-medium);
     line-height: 50px;
     transition: width var(--transition-speed);
+}
+
+/* Responsive Font Sizes for Main Timer and Details */
+.details {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    text-shadow: 1px 1px #ddd;
+    text-align: center;
+    margin-bottom: 20px;
 }
 /*================================================================
 CONTROLS
@@ -217,6 +217,21 @@ button:hover {
     opacity: 0.9;
 }
 
+/* Butons status */
+button.start.inactive,
+button.pause.inactive,
+button.stop.inactive {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: #4b4b4b; /* Adding a grayed out color */
+    box-shadow: none; /* Remove shadow for inactive state */
+}
+
+button {
+    transition: opacity 0.3s ease;
+}
+
 .input-group {
     display: flex;
     align-items: center;
@@ -285,7 +300,44 @@ NOTIFICATIONS
     transform: translateY(0);
 }
 
+/*================================================================
+ADDITIONAL TIMERS
+==================================================================*/
+/* Additional Timer Layout Adjustments */
+.timer-section.has-additional-timers {
+    height: auto !important;
+    min-height: 45vh;
+    padding-bottom: 1rem;
+}
 
+/* Ensure progress bar stays visible */
+.progress {
+    position: relative !important;
+    z-index: 2;
+}
+
+.progress-bar {
+    position: relative !important;
+    z-index: 2;
+}
+
+/* Adjust controls position */
+.controls {
+    position: relative;
+    z-index: 3;
+    margin: 1rem 0;
+    padding-bottom: 1rem;
+}
+
+/* Main timer display adjustments when additional timers are present */
+.timer-section.has-additional-timers .timer {
+    font-size: 10vw;
+    margin: 1rem 0;
+}
+
+.timer-section.has-additional-timers .additional-time {
+    margin: 0.5rem 0;
+}
 /*================================================================
 RESPONSIVE 
 ==================================================================*/

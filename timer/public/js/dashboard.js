@@ -1,6 +1,3 @@
-
-// Updated dashboard.js to save logo path as /img/uploads/logo_name.ext
-
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('event-form');
 
@@ -9,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Capture form data
     const eventData = {
-      eventTitle: document.getElementById('event-title').value,
+      eventTitle: document.getElementById('eventTitle').value,
       presenter: document.getElementById('presenter').value,
       title: document.getElementById('title').value,
       schedule: parseInt(document.getElementById('schedule').value) * 60, // Convert minutes to seconds
@@ -17,48 +14,51 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Handle logo upload
-    const logoUpload = document.getElementById('logo-upload').files[0];
-    if (logoUpload) {
-      const logoPath = `/img/uploads/${logoUpload.name}`;
-      eventData.logoPath = logoPath;
-
-      // Save uploaded logo file to server (simulated path)
+    const logoFile = document.getElementById('logo').files[0];
+    if (logoFile) {
       const formData = new FormData();
-      formData.append('file', logoUpload);
+      formData.append('file', logoFile);
 
       try {
-        await fetch('/upload-logo', { // Endpoint to handle file upload
+        const uploadResponse = await fetch('/upload-logo', {
           method: 'POST',
           body: formData
         });
+
+        if (uploadResponse.ok) {
+          const result = await uploadResponse.json();
+          eventData.logoPath = result.filePath;
+        }
       } catch (error) {
         console.error('Error uploading logo:', error);
+        alert('Failed to upload logo.');
+        return;
       }
     }
 
-    // Save form data to config.json
+    // Save configuration
     try {
-      await fetch('/save-config', {
+      const saveResponse = await fetch('/save-config', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(eventData)
       });
-      alert('Event configuration saved successfully!');
-      // Redirect to timer.html to start the timer with the configured settings
-      window.location.href = '/timer.html';
+
+      if (saveResponse.ok) {
+        // Store timer initialization data in localStorage
+        localStorage.setItem('initialTime', eventData.schedule.toString());
+        localStorage.setItem('initialDisplayTime', `${eventData.schedule / 60} Minutes`);
+
+        // Redirect to timer page
+        window.location.href = 'timer.html';
+      } else {
+        throw new Error('Failed to save configuration');
+      }
     } catch (error) {
-      console.error('Error saving config:', error);
-      alert('Failed to save configuration.');
+      console.error('Error saving configuration:', error);
+      alert('Failed to save configuration. Please try again.');
     }
   });
-});
-
-
-// Pass the schedule value to timer.html on form submission
-document.getElementById('event-form').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent form submission to server
-    const scheduleInput = document.getElementById('schedule').value; // Get schedule in minutes
-    localStorage.setItem('initialTime', scheduleInput * 60); // Store initial time in seconds
-    localStorage.setItem('initialDisplayTime', scheduleInput + ' Minutes'); // Store display time as minutes
-    window.location.href = 'timer.html'; // Redirect to timer page
 });
