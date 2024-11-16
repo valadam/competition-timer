@@ -1,7 +1,7 @@
 {
-  "eventTitle": "Test Event Name",
-  "presenter": "Val",
-  "title": "MODULE X",
-  "schedule": 900,
-  "logoPath": "/img/uploads/logo.png"
+  "eventTitle": "WSUK Test",
+  "presenter": "Val2",
+  "title": "Module B",
+  "schedule": 600,
+  "logoPath": "/img/uploads/school.jpg"
 }

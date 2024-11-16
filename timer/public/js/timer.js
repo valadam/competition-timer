@@ -11,6 +11,7 @@ class TimerController {
         this.timerDisplay = document.getElementById('timer');
         this.additionalTimeDisplay = document.getElementById('additional-time-display');
         this.progressBar = document.getElementById('progress-bar');
+        this.scheduleDisplay = document.getElementById('schedule');
 
         // Control buttons
         this.startButton = document.getElementById('start');
@@ -28,8 +29,8 @@ class TimerController {
 
     initializeState(initialSeconds) {
         this.totalTime = initialSeconds;
-        this.initialTimeframe = null; // Removed 3-minute default to allow dynamic setting
-        this.maxTime = this.initialTimeframe;
+        this.initialTimeframe = initialSeconds;
+        this.maxTime = initialSeconds;
         this.interval = null;
         this.isPaused = false;
         this.additionalTime = 0;
@@ -64,9 +65,14 @@ class TimerController {
     validateAndSetTimeframe() {
         const newTime = this.validateTimeInput(this.newTimeframeInput.value, 'timeframe');
         if (newTime !== null) {
-            this.totalTime = newTime * 60;
-            this.initialTimeframe = this.totalTime;
-            this.maxTime = this.totalTime;
+            const newTimeInSeconds = newTime * 60;
+            this.totalTime = newTimeInSeconds;
+            this.initialTimeframe = newTimeInSeconds;
+            this.maxTime = newTimeInSeconds;
+
+            // Update the schedule display with the new time
+            this.scheduleDisplay.textContent = `${newTime} Minutes`;
+
             this.updateDisplays();
             this.clearInputs();
         }
@@ -198,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('title').textContent = config.title || 'Module Title';
 
         const initialSeconds = config.schedule || 0;
-        document.getElementById('schedule').textContent = formatDuration(initialSeconds);
+        document.getElementById('schedule').textContent = `${Math.floor(initialSeconds / 60)} Minutes`;
 
         // Initialize timer with configuration
         new TimerController(initialSeconds);
@@ -283,16 +289,6 @@ logoUploadInput.addEventListener('change', (event) => {
         showNotification("Please upload a valid image file."); // Notify if not an image
     }
 });
-
-
-// Update the "Time" display with the current countdown value
-function updateScheduleTime() {
-    const scheduleElement = document.getElementById('schedule');
-    const timerElement = document.getElementById('timer');
-    scheduleElement.innerText = timerElement.textContent;
-}
-
-
 
 // Update the "Time" display with the live countdown value
 function updateScheduleTime() {
