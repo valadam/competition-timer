@@ -103,7 +103,7 @@ class TimerController {
         }
     }
 
-    // Modify these methods to update button states
+    // Update button states (active/innactive)
     startTimer() {
         if (this.interval) {
             clearInterval(this.interval);
@@ -178,8 +178,6 @@ class TimerController {
     }
 }
 
-
-
 // Initialize configuration and timer
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -190,7 +188,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const logoElement = document.getElementById('dynamic-logo');
         logoElement.src = config.logoPath || "/img/uploads/default_logo.png";
 
-        // Update event title using class selector
+        // Update event title
         const eventTitleElement = document.querySelector('.event-title');
         if (eventTitleElement) {
             eventTitleElement.textContent = config.eventTitle || 'Event Title';
@@ -247,8 +245,7 @@ updateDateTime();
 // Refresh every second
 setInterval(updateDateTime, 1000);
 
-// Function to display a custom notification
-// Custom notification function
+// Custom notification
 function showNotification(message) {
     const notification = document.getElementById('notification');
     notification.textContent = message;
@@ -260,7 +257,7 @@ function showNotification(message) {
     }, 3000);
 }
 
-// Handle logo upload functionality
+// Handle logo upload
 const logoElement = document.getElementById('dynamic-logo');
 const logoUploadInput = document.getElementById('logo-upload');
 
@@ -288,7 +285,7 @@ logoUploadInput.addEventListener('change', (event) => {
 });
 
 
-// Function to update the "Time" display with the current countdown value
+// Update the "Time" display with the current countdown value
 function updateScheduleTime() {
     const scheduleElement = document.getElementById('schedule');
     const timerElement = document.getElementById('timer');
@@ -297,7 +294,7 @@ function updateScheduleTime() {
 
 
 
-// Function to update the "Time" display with the live countdown value
+// Update the "Time" display with the live countdown value
 function updateScheduleTime() {
     const scheduleElement = document.getElementById('schedule');
     const timerElement = document.getElementById('timer');
@@ -317,7 +314,7 @@ if (initialTime && initialDisplayTime) {
     document.getElementById('schedule').innerText = initialDisplayTime; // Display time in "Time" section
 }
 
-// Update countdown when "Set" button is clicked
+// Update countdown when SET button is clicked
 document.getElementById('set-timeframe').addEventListener('click', function () {
     const newTimeFrameInput = document.getElementById('new-timeframe').value;
     if (newTimeFrameInput) {

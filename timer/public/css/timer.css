@@ -204,8 +204,6 @@ button.add-time {
     background-color: var(--add-btn-color);
     margin-left: 10px;
 }
-
-/* Competitor Extra Time Button */
 button.competitor-extra-time {
     background-color: var(--competitor-extra-time-color);
     color: white;
@@ -229,7 +227,7 @@ button.stop.inactive {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
-    background-color: #4b4b4b; /* Adding a grayed out color */
+    background-color: #4b4b4b; /* Dark grey for inactive state */
     box-shadow: none; /* Remove shadow for inactive state */
 }
 
@@ -308,14 +306,14 @@ NOTIFICATIONS
 /*================================================================
 ADDITIONAL TIMERS
 ==================================================================*/
-/* Additional Timer Layout Adjustments */
+/* Additional timer layout adjustments */
 .timer-section.has-additional-timers {
     height: auto !important;
     min-height: 45vh;
     padding-bottom: 1rem;
 }
 
-/* Ensure progress bar stays visible */
+/* Progress bar stays visible */
 .progress {
     position: relative !important;
     z-index: 2;

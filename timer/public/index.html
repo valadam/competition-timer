@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Timer Setup</title>
+    <title>WSC - Event Timer Dashboard</title>
     <link rel="stylesheet" href="css/dasboard.css">
 </head>
+
 <body>
     <div class="container">
         <div class="event-time">Event Timer Setup</div>
-        
+
         <form id="event-form">
             <div class="form-group">
                 <label for="eventTitle">Event Title:</label>
@@ -28,13 +30,7 @@
 
             <div class="form-group">
                 <label for="schedule">Schedule (in minutes):</label>
-                <input type="number" 
-                       id="schedule" 
-                       min="1" 
-                       step="1" 
-                       pattern="\d*" 
-                       inputmode="numeric" 
-                       required>
+                <input type="number" id="schedule" min="1" step="1" pattern="\d*" inputmode="numeric" required>
             </div>
 
             <div class="form-group">
@@ -47,4 +43,5 @@
     </div>
     <script src="js/dashboard.js"></script>
 </body>
+
 </html>

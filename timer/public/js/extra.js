@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Array to hold all additional timers
   const additionalTimers = [];
 
-  // Function to adjust main timer height - moved outside
+  // Adjust main timer height based on additional timers
   function adjustMainTimerHeight() {
     if (additionalTimers.length > 0) {
       timerSection.classList.add('has-additional-timers');
