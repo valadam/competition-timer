@@ -1,7 +1,7 @@
 {
-  "eventTitle": "WSUK Test",
-  "presenter": "Val2",
-  "title": "Event Comp",
-  "schedule": 600,
-  "logoPath": "/img/uploads/wsuk_logo.png"
+  "eventTitle": "Test Event Name",
+  "presenter": "Val",
+  "title": "MODULE X",
+  "schedule": 900,
+  "logoPath": "/img/uploads/logo.png"
 }

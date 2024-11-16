@@ -10,18 +10,19 @@
     --competitor-extra-time-color: #533687;
     --progress-bg-color: #e0e0e0;
     --progress-bar-color: #8bc34a;
-    --font-size-large: 4rem;
-    --font-size-extra-large: 15vw; 
-    --font-size-medium: 2rem;
-    --font-size-small: 1.2rem;
-    --font-size-extra-small: 1rem;
-    --title-font-size: 4vw;
-    --label-font-size: 1.8rem;
+    /* Responsive font sizes */
+    --font-size-large: clamp(2rem, 4vw, 4rem);
+    --font-size-extra-large: clamp(2rem, 8vw, 15vw);
+    --font-size-medium: clamp(1.2rem, 2vw, 2rem);
+    --font-size-small: clamp(0.8rem, 1.5vw, 1.2rem);
+    --font-size-extra-small: clamp(0.7rem, 1vw, 1rem);
+    --title-font-size: clamp(1.5rem, 4vw, 4rem);
+    --label-font-size: clamp(1rem, 2vw, 1.8rem);
     --transition-speed: 0.5s;
 }
 
-/* General layout */
 
+/* General layout */
 body {
     font-family: Arial, sans-serif;
     background-color: var(--background-color);
@@ -38,10 +39,10 @@ body {
     width: 100vw;
     height: 100vh;
     background-color: var(--container-bg-color);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    padding: clamp(10px, 2vh, 20px);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    overflow: hidden;
 }
 
 /*================================================================
@@ -50,24 +51,26 @@ HEADER
 header {
     display: flex;
     justify-content: space-between;
-    align-items: center; 
-    height: 100px;
-    padding: 10px 20px;
-    margin-bottom: 50px;
+    align-items: center;
+    height: clamp(60px, 10vh, 100px);
+    padding: clamp(5px, 1vh, 10px) clamp(10px, 2vw, 20px);
+    margin-bottom: clamp(20px, 3vh, 50px);
 }
 
 .logo {
     height: 100%;
+    max-height: 200px;
+    width: auto;
 }
 
 /* Event Title Styling */
 .event-title {
-    font-size: 4rem;
+    font-size: var(--title-font-size);
     font-weight: bold;
     color: #d32f2f;
     text-align: center;
     text-shadow: 2px 2px #1f0202;
-    margin: 20px 0;
+    margin: clamp(10px, 2vh, 20px) 0;
     letter-spacing: 1px;
 }
 
@@ -76,7 +79,7 @@ header {
     text-align: right;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
-    line-height: 1.4; 
+    line-height: 1.4;
 }
 
 /*================================================================
@@ -112,13 +115,14 @@ MAIN CONTENT
     font-size: var(--font-size-large);
     color: gray;
     text-shadow: 1px 1px #474545;
-    margin-bottom: 20px;
+    margin: clamp(5px, 1vh, 10px) 0;
+    text-align: center;
 }
 
 .progress {
     width: 100%;
     background-color: var(--progress-bg-color);
-    height: 50px;
+    height: clamp(30px, 5vh, 50px);
     overflow: hidden;
     box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.5);
 }
@@ -130,35 +134,36 @@ MAIN CONTENT
     padding-right: 10px;
     color: black;
     font-size: var(--font-size-medium);
-    line-height: 50px;
+    line-height: clamp(30px, 5vh, 50px);
     transition: width var(--transition-speed);
 }
 
 /* Responsive Font Sizes for Main Timer and Details */
 .details {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(10px, 2vw, 20px);
     width: 100%;
-    font-size: 2rem;
+    font-size: var(--font-size-medium);
     font-weight: bold;
     color: #333;
     text-shadow: 1px 1px #ddd;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: clamp(10px, 2vh, 20px);
 }
 /*================================================================
 CONTROLS
 ==================================================================*/
 .controls {
-  padding-top: 2rem;
+    padding: clamp(10px, 2vh, 2rem) 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 25px;
+    gap: clamp(10px, 2vw, 25px);
     flex-wrap: wrap;
-    margin-top: 20px;
     width: 100%;
 }
+
 
 .inline-controls {
     display: flex;

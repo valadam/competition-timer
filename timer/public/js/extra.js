@@ -83,14 +83,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Get main timer current time and additional time
-      const mainTimerSeconds = getMainTimerSeconds();
-      const additionalSeconds = additionalMinutes * 60;
-      const totalSeconds = mainTimerSeconds + additionalSeconds; // Combine main timer and additional time
-
       timer.stationNumber = station;
-      timer.allocatedMinutes = Math.ceil(totalSeconds / 60);
-      timer.remainingSeconds = totalSeconds; // Set the total time
+      timer.allocatedMinutes = additionalMinutes;
       timer.active = true;
       timer.isPaused = false;
 
@@ -136,6 +130,13 @@ document.addEventListener("DOMContentLoaded", function () {
     clearInterval(timer.interval);
     timer.isPaused = false;
 
+    // Set initial times
+    const mainTimerSeconds = getMainTimerSeconds();
+    const additionalSeconds = timer.allocatedMinutes * 60;
+    timer.remainingSeconds = mainTimerSeconds + additionalSeconds;
+    timer.initialMainTime = mainTimerSeconds;
+    timer.totalAdditionalTime = additionalSeconds;
+
     timer.interval = setInterval(() => {
       if (!isMainTimerRunning()) {
         if (!timer.isPaused) {
@@ -145,12 +146,18 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (timer.remainingSeconds > 0 && !timer.isPaused) {
-        timer.remainingSeconds--;
-        display.textContent = formatTime(timer.remainingSeconds);
-      } else if (timer.remainingSeconds === 0) {
-        clearInterval(timer.interval);
-        timer.active = false;
-        alert(`Time's up for Station ${timer.stationNumber}!`);
+        const currentMainTime = getMainTimerSeconds();
+        const timeElapsed = timer.initialMainTime - currentMainTime;
+        timer.remainingSeconds = timer.totalAdditionalTime + currentMainTime;
+
+        if (timer.remainingSeconds > 0) {
+          display.textContent = formatTime(timer.remainingSeconds);
+        } else {
+          clearInterval(timer.interval);
+          timer.active = false;
+          display.textContent = "00:00:00";
+          alert(`Time's up for Station ${timer.stationNumber}!`);
+        }
       }
     }, 1000);
   }
